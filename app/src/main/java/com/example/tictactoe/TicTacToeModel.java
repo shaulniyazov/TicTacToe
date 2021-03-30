@@ -38,9 +38,15 @@ public class TicTacToeModel {
 
             }
         }
-        if(grid[0][0].equals(grid[1][0]) && grid[0][0].equals(grid[2][0]))
+        if (grid[0][0].equals(grid[1][0]) && grid[0][0].equals(grid[2][0])
+                || grid[0][1].equals(grid[1][1]) && grid[0][0].equals(grid[2][1])
+                || grid[0][2].equals(grid[1][2]) && grid[0][2].equals(grid[2][2])
+                || grid[0][0].equals(grid[0][1]) && grid[0][0].equals(grid[0][2])
+                || grid[1][0].equals(grid[1][1]) && grid[1][0].equals(grid[1][2])
+                || grid[2][0].equals(grid[2][1]) && grid[2][0].equals(grid[2][2])
+                || grid[0][0].equals(grid[1][1]) && grid[0][0].equals(grid[2][2])
+                || grid[0][2].equals(grid[1][1]) && grid[0][2].equals(grid[2][0]))
             return true;
-        //if(grid[1][0])
         return false;
     }
 
