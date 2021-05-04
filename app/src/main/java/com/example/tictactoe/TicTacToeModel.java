@@ -32,12 +32,12 @@ public class TicTacToeModel {
         }
     }
 
-    private boolean isWin() {
-        for (int i = 0; i < 3; i++) {
+    public boolean isWin() {
+        /*for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
 
             }
-        }
+        } */
         if (grid[0][0].equals(grid[1][0]) && grid[0][0].equals(grid[2][0])
                 || grid[0][1].equals(grid[1][1]) && grid[0][0].equals(grid[2][1])
                 || grid[0][2].equals(grid[1][2]) && grid[0][2].equals(grid[2][2])
@@ -57,8 +57,6 @@ public class TicTacToeModel {
             }
         }
     }
-
-    //TODO win method
 
     enum WhoseTurn{
         None, X, O;
