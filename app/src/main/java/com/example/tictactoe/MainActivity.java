@@ -20,13 +20,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         instantiateButtons();
 
-        /*Button restartB = findViewById(R.id.btnRestart);
+        Button restartB = findViewById(R.id.restart);
         restartB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recreate();
+                //recreate just restarts the app while the code below sets everything back to the beginning.
+                //recreate();
+                model.restart();
+                model.currPlayer = TicTacToeModel.WhoseTurn.X;
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        buttons[i][j].setClickable(true);
+                        buttons[i][j].setText("");
+                    }
+                }
             }
-        }); */
+        });
 
     }
 
@@ -46,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 buttonText[i][j] = buttons[i][j].getText().toString();
                 buttons[i][j].setTextSize(38);
                 buttons[i][j].setTag(i + "," + j);
-                System.out.println("\n" + "===================="+ "\n" + i + "," + j);
                 buttons[i][j].setOnClickListener(this);
             }
         }
@@ -67,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String tag = (String) button.getTag();
         int row = tag.charAt(0) - 48;
         int col = tag.charAt(2) - 48;
-        System.out.println("\n" + "===================="+ "\n" + row + "," + col);
         if (model.currPlayer.equals(TicTacToeModel.WhoseTurn.X) && model.isValidClick(row, col)) {
             button.setText("X");
             model.cellClick(row,col, TicTacToeModel.WhoseTurn.X);
@@ -78,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (model.isWin()) {
             stop(buttons);
+            Toast.makeText(getApplicationContext(),
+                    "Horray! you won!",Toast.LENGTH_SHORT).show();
         }
 
     }

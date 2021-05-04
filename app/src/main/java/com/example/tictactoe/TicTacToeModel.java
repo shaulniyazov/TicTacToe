@@ -26,10 +26,7 @@ public class TicTacToeModel {
             grid[row][col] = turn.toString();
             currPlayer = (currPlayer.equals(WhoseTurn.X)) ? WhoseTurn.O : WhoseTurn.X;
         }
-        if(isWin()){
-            //insert shrug emoji here
-            System.out.println("Horray! you won");
-        }
+        isWin();
     }
 
     public boolean isWin() {
@@ -48,9 +45,7 @@ public class TicTacToeModel {
                 || (grid[0][0].equals(grid[1][1]) && grid[0][0].equals(grid[2][2]) && (!grid[0][0].equals(""))) //Top-Left diagonal
                 || (grid[0][2].equals(grid[1][1]) && grid[0][2].equals(grid[2][0]) && (!grid[0][2].equals(""))) //Top-Right diagonal
         )
-        {
             return true;
-        }
         return false;
     }
 
