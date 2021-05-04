@@ -23,7 +23,7 @@ public class TicTacToeModel {
 
     public void cellClick(int row, int col, WhoseTurn turn){
         if(isValidClick(row,col)){
-            grid[row][col].replace("", turn.toString());
+            grid[row][col] = turn.toString();
             currPlayer = (currPlayer.equals(WhoseTurn.X)) ? WhoseTurn.O : WhoseTurn.X;
         }
         if(isWin()){
@@ -39,15 +39,18 @@ public class TicTacToeModel {
             }
         } */
         //TODO even the empty buttons are equal to each other
-        if (grid[0][0].equals(grid[1][0]) && grid[0][0].equals(grid[2][0])
-                || grid[0][1].equals(grid[1][1]) && grid[0][0].equals(grid[2][1])
-                || grid[0][2].equals(grid[1][2]) && grid[0][2].equals(grid[2][2])
-                || grid[0][0].equals(grid[0][1]) && grid[0][0].equals(grid[0][2])
-                || grid[1][0].equals(grid[1][1]) && grid[1][0].equals(grid[1][2])
-                || grid[2][0].equals(grid[2][1]) && grid[2][0].equals(grid[2][2])
-                || grid[0][0].equals(grid[1][1]) && grid[0][0].equals(grid[2][2])
-                || grid[0][2].equals(grid[1][1]) && grid[0][2].equals(grid[2][0]))
+        if ((grid[0][0].equals(grid[1][0]) && grid[0][0].equals(grid[2][0]) && (!grid[0][0].equals(""))) //Left vertical
+                || (grid[0][1].equals(grid[1][1]) && grid[0][0].equals(grid[2][1]) && (!grid[0][1].equals(""))) //Middle vertical
+                || (grid[0][2].equals(grid[1][2]) && grid[0][2].equals(grid[2][2]) && (!grid[0][2].equals(""))) //Right vertical
+                || (grid[0][0].equals(grid[0][1]) && grid[0][0].equals(grid[0][2]) && (!grid[0][0].equals(""))) //Top horizontal
+                || (grid[1][0].equals(grid[1][1]) && grid[1][0].equals(grid[1][2]) && (!grid[1][0].equals(""))) //Middle horizontal
+                || (grid[2][0].equals(grid[2][1]) && grid[2][0].equals(grid[2][2]) && (!grid[2][0].equals(""))) //Bottom horizontal
+                || (grid[0][0].equals(grid[1][1]) && grid[0][0].equals(grid[2][2]) && (!grid[0][0].equals(""))) //Top-Left diagonal
+                || (grid[0][2].equals(grid[1][1]) && grid[0][2].equals(grid[2][0]) && (!grid[0][2].equals(""))) //Top-Right diagonal
+        )
+        {
             return true;
+        }
         return false;
     }
 

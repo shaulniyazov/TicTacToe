@@ -76,9 +76,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             model.cellClick(row,col, TicTacToeModel.WhoseTurn.O);
 
         }
-//        if (model.isWin()) {
-//            stop(buttons);
-//        }
+        if (model.isWin()) {
+            stop(buttons);
+        }
 
     }
 
