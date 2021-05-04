@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 buttonText[i][j] = buttons[i][j].getText().toString();
                 buttons[i][j].setTextSize(38);
                 buttons[i][j].setTag(i + "," + j);
+                System.out.println("\n" + "===================="+ "\n" + i + "," + j);
                 buttons[i][j].setOnClickListener(this);
             }
         }
@@ -64,9 +65,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         Button button = (Button) v;
         String tag = (String) button.getTag();
-        int row = tag.charAt(0);
-        int col = tag.charAt(2);
-
+        int row = tag.charAt(0) - 48;
+        int col = tag.charAt(2) - 48;
+        System.out.println("\n" + "===================="+ "\n" + row + "," + col);
         if (model.currPlayer.equals(TicTacToeModel.WhoseTurn.X) && model.isValidClick(row, col)) {
             button.setText("X");
             model.cellClick(row,col, TicTacToeModel.WhoseTurn.X);
@@ -75,9 +76,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             model.cellClick(row,col, TicTacToeModel.WhoseTurn.O);
 
         }
-        if (model.isWin()) {
-            stop(buttons);
-        }
+//        if (model.isWin()) {
+//            stop(buttons);
+//        }
 
     }
 }
