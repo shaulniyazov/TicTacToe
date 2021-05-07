@@ -30,12 +30,6 @@ public class TicTacToeModel {
     }
 
     public boolean isWin() {
-        /*for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-
-            }
-        } */
-        //TODO even the empty buttons are equal to each other
         if ((grid[0][0].equals(grid[1][0]) && grid[0][0].equals(grid[2][0]) && (!grid[0][0].equals(""))) //Left vertical
                 || (grid[0][1].equals(grid[1][1]) && grid[0][0].equals(grid[2][1]) && (!grid[0][1].equals(""))) //Middle vertical
                 || (grid[0][2].equals(grid[1][2]) && grid[0][2].equals(grid[2][2]) && (!grid[0][2].equals(""))) //Right vertical

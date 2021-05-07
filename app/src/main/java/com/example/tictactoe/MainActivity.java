@@ -104,15 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_statistics: {
-                showStatistics();
-                return true;
-            }
-            case R.id.action_reset_stats: {
-                //mGame.resetStatistics();
-                //todo
-                return true;
-            }
+
             case R.id.action_settings: {
                 showSettings();
                 return true;
@@ -129,15 +121,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showSettings() {
     }
 
+
     private void showAbout() {
 
         showInfoDialog(MainActivity.this, "About Tic Tac Toe",
                 "Two Player version of Tic Tac Toe.\n" +
                         "\nMade by Joshua Horowitz, Sholom Abrahams, and Shaul Niyazov");
     }
-
-    private void showStatistics() {
-    }
-
 
 }
