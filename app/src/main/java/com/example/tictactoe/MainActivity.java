@@ -89,8 +89,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (model.isWin()) {
             stop(buttons);
+            String winningPlayer = (!model.currPlayer.toString().equals(TicTacToeModel.WhoseTurn.X.toString())) ? "X" : "O";
             Toast.makeText(getApplicationContext(),
-                    "Horray! you won!",Toast.LENGTH_SHORT).show();
+                    "Hooray! " + winningPlayer + " won!",Toast.LENGTH_SHORT).show();
         }
 
     }
