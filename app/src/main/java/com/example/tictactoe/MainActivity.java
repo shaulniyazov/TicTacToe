@@ -1,9 +1,12 @@
 package com.example.tictactoe;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -193,8 +196,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showSettings() {
+        Intent intent = new Intent(getApplicationContext(), Settings.class);
+        startActivityForResult(intent, 1);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 1) {
+            restoreOrSetFromPreferences_AllAppAndGameSettings();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     private void showAbout() {
 
