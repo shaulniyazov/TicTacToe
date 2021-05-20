@@ -3,9 +3,7 @@ package com.example.tictactoe;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,11 +20,11 @@ import static com.example.tictactoe.Utils.showInfoDialog;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private String KEY_AUTO_SAVE;
-    private TicTacToeModel model = new TicTacToeModel();
-    Button buttons[][] = new Button[3][3];
-    String buttonText[][] = new String[3][3];
-    private boolean useAutoSave;
+    private TicTacToeModel model;
+    private Button buttons[][];
+    private String buttonText[][];
+    private boolean mUseAutoSave;
+    private String mKeyUseAutoSave;
     private final String mKEY_GAME = "GAME";
 
     @Override
@@ -34,8 +32,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setUpFields();
         instantiateButtons();
+        instantiateRestartButton();
 
+    }
+
+    private void setUpFields() {
+        model = new TicTacToeModel();
+        buttons = new Button[3][3];
+        buttonText = new String[3][3];
+        mKeyUseAutoSave = getString(R.string.auto_save_key);
+    }
+
+    private void instantiateRestartButton() {
         Button restartB = findViewById(R.id.restart);
         restartB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,19 +62,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
-
     }
 
     private void instantiateButtons() {
-        buttons[0][0] = (Button)findViewById(R.id.button1);
-        buttons[0][1] = (Button)findViewById(R.id.button2);
-        buttons[0][2] = (Button)findViewById(R.id.button3);
-        buttons[1][0] = (Button)findViewById(R.id.button4);
-        buttons[1][1] = (Button)findViewById(R.id.button5);
-        buttons[1][2] = (Button)findViewById(R.id.button6);
-        buttons[2][0] = (Button)findViewById(R.id.button7);
-        buttons[2][1] = (Button)findViewById(R.id.button8);
-        buttons[2][2] = (Button)findViewById(R.id.button9);
+        buttons[0][0] = (Button) findViewById(R.id.button1);
+        buttons[0][1] = (Button) findViewById(R.id.button2);
+        buttons[0][2] = (Button) findViewById(R.id.button3);
+        buttons[1][0] = (Button) findViewById(R.id.button4);
+        buttons[1][1] = (Button) findViewById(R.id.button5);
+        buttons[1][2] = (Button) findViewById(R.id.button6);
+        buttons[2][0] = (Button) findViewById(R.id.button7);
+        buttons[2][1] = (Button) findViewById(R.id.button8);
+        buttons[2][2] = (Button) findViewById(R.id.button9);
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -77,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public void stop(Button buttons[][]) {
+    public void disableBoard(Button buttons[][]) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 buttons[i][j].setClickable(false);
@@ -91,19 +100,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String tag = (String) button.getTag();
         int row = tag.charAt(0) - 48;
         int col = tag.charAt(2) - 48;
-        if (model.currPlayer.equals(TicTacToeModel.WhoseTurn.X) && model.isValidClick(row, col)) {
-            button.setText("X");
-            model.cellClick(row,col, TicTacToeModel.WhoseTurn.X);
-        } else if (model.currPlayer.equals(TicTacToeModel.WhoseTurn.O) && model.isValidClick(row, col)) {
-            button.setText("O");
-            model.cellClick(row,col, TicTacToeModel.WhoseTurn.O);
 
-        }
-        if (model.isWin()) {
-            stop(buttons);
-            String winningPlayer = (!model.currPlayer.toString().equals(TicTacToeModel.WhoseTurn.X.toString())) ? "X" : "O";
-            Toast.makeText(getApplicationContext(),
-                    "Hooray! " + winningPlayer + " won!",Toast.LENGTH_SHORT).show();
+        if (model.isValidClick(row, col)) {
+            if (model.currPlayer.equals(TicTacToeModel.WhoseTurn.X)) {
+                button.setText("X");
+                model.cellClick(row, col, TicTacToeModel.WhoseTurn.X);
+            } else if (model.currPlayer.equals(TicTacToeModel.WhoseTurn.O)) {
+                button.setText("O");
+                model.cellClick(row, col, TicTacToeModel.WhoseTurn.O);
+
+            }
+            if (model.isWin()) {
+                disableBoard(buttons);
+                String winningPlayer = (!model.currPlayer.toString().equals(TicTacToeModel.WhoseTurn.X.toString())) ? "X" : "O";
+                Toast.makeText(getApplicationContext(),
+                        "Hooray! " + winningPlayer + " won!", Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
@@ -142,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences.Editor editor = defaultSharedPreferences.edit();
 
         // Save current game or remove any prior game to/from default shared preferences
-        if (useAutoSave)
+        if (mUseAutoSave)
             editor.putString(mKEY_GAME, model.getJSONFromCurrentGame());
         else
             editor.remove(mKEY_GAME);
@@ -153,25 +165,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-
-        restoreFromPreferences_SavedGameIfAutoSaveWasSetOn();
-        restoreOrSetFromPreferences_AllAppAndGameSettings();
+        setAutoSaveFromPreferences();
+        restoreGameIfAutoSaveOn();
+        updateUI();
     }
 
-    private void restoreFromPreferences_SavedGameIfAutoSaveWasSetOn() {
+    private void restoreGameIfAutoSaveOn() {
         SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences(this);
-        if (defaultSharedPreferences.getBoolean(KEY_AUTO_SAVE,true)) {
+        if (mUseAutoSave) {
             String gameString = defaultSharedPreferences.getString(mKEY_GAME, null);
-            if (gameString!=null) {
-                model = getGameFromJSON(gameString);
-                updateUI();
-            }
+            model = gameString != null ? getGameFromJSON(gameString) : model;
         }
     }
 
-    private void restoreOrSetFromPreferences_AllAppAndGameSettings() {
+    private void setAutoSaveFromPreferences() {
         SharedPreferences sp = getDefaultSharedPreferences(this);
-        useAutoSave = sp.getBoolean(KEY_AUTO_SAVE, true);
+        mUseAutoSave = sp.getBoolean(mKeyUseAutoSave, true);
     }
 
     @Override
@@ -190,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void updateUI() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                buttons[i][j].setText(model.getText(i,j));
+                buttons[i][j].setText(model.getText(i, j));
             }
         }
     }
@@ -203,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 1) {
-            restoreOrSetFromPreferences_AllAppAndGameSettings();
+            setAutoSaveFromPreferences();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
