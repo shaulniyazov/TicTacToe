@@ -13,11 +13,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.Random;
+
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.example.tictactoe.TicTacToeModel.getGameFromJSON;
 import static com.example.tictactoe.TicTacToeModel.getJSONFromGame;
 import static com.example.tictactoe.Utils.showInfoDialog;
 
+
+/*todo? https://stackoverflow.com/questions/30586252/how-to-change-git-repository-using-android-studio
+    1) fix the bug where game crashes if its a draw in single player mode
+    2) fix the button press if screen is rotated bug
+    3)make the title screen look nicer
+    4)(optional i guess) make back buttons
+    5)(def. optional) statistics activity
+    6)(insane) work on the AI
+    7)start something else.
+
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TicTacToeModel model;
@@ -26,12 +39,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean mUseAutoSave;
     private String mKeyUseAutoSave;
     private final String mKEY_GAME = "GAME";
+    private static int countForComputer = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setUpFields();
         instantiateButtons();
         instantiateRestartButton();
@@ -54,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //recreate();
                 model.restart();
                 model.currPlayer = TicTacToeModel.WhoseTurn.X;
+                countForComputer = 0;
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
                         buttons[i][j].setClickable(true);
@@ -65,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void instantiateButtons() {
-        buttons[0][0] = (Button) findViewById(R.id.button1);
+        buttons[0][0] = findViewById(R.id.button1);
         buttons[0][1] = (Button) findViewById(R.id.button2);
         buttons[0][2] = (Button) findViewById(R.id.button3);
         buttons[1][0] = (Button) findViewById(R.id.button4);
@@ -96,28 +110,73 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        if(TitleScreen.getMode() == 1)
+            onClickWithComputer((Button) v);
+        else if(TitleScreen.getMode() == 2)
+            onClickTwoPlayers((Button) v);
+    }
+
+    private void onClickWithComputer(Button v) {
+        Button button = v;
+        String tag = (String) button.getTag();
+        int row = tag.charAt(0) - 48;
+        int col = tag.charAt(2) - 48;
+//        Toast.makeText(getApplicationContext(),
+//                model.currPlayer + " Turn!", Toast.LENGTH_SHORT).show();
+        if (model.isValidClick(row, col)) {
+            button.setText("X");
+            model.cellClick(row, col, TicTacToeModel.WhoseTurn.X);
+            if (isWin()) return;
+            //todo if it is a draw then the game crashes because it keeps running computersTurn throws StackOverflowException
+
+            if(computersTurn() && isWin()) return;
+            else return;
+        }
+
+    }
+
+    public void onClickTwoPlayers(View v) {
         Button button = (Button) v;
         String tag = (String) button.getTag();
         int row = tag.charAt(0) - 48;
         int col = tag.charAt(2) - 48;
-
         if (model.isValidClick(row, col)) {
             if (model.currPlayer.equals(TicTacToeModel.WhoseTurn.X)) {
                 button.setText("X");
                 model.cellClick(row, col, TicTacToeModel.WhoseTurn.X);
+
             } else if (model.currPlayer.equals(TicTacToeModel.WhoseTurn.O)) {
                 button.setText("O");
                 model.cellClick(row, col, TicTacToeModel.WhoseTurn.O);
 
             }
-            if (model.isWin()) {
-                disableBoard(buttons);
-                String winningPlayer = (!model.currPlayer.toString().equals(TicTacToeModel.WhoseTurn.X.toString())) ? "X" : "O";
-                Toast.makeText(getApplicationContext(),
-                        "Hooray! " + winningPlayer + " won!", Toast.LENGTH_SHORT).show();
-            }
+            isWin();
         }
 
+    }
+
+    private boolean isWin() {
+        if (model.isWin()) {
+            disableBoard(buttons);
+            String winningPlayer = (!model.currPlayer.toString().equals(TicTacToeModel.WhoseTurn.X.toString())) ? "X" : "O";
+            Toast.makeText(getApplicationContext(),
+                    "Hooray! " + winningPlayer + " won!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean computersTurn() {
+        Random rand = new Random();
+        int row = rand.nextInt(3), col = rand.nextInt(3);
+        if(model.computersTurn(row,col)){
+            buttons[row][col].setText("O");
+            return true;
+        }
+        else{
+            computersTurn();
+        }
+        return false;
     }
 
     @Override

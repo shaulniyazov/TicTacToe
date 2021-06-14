@@ -1,11 +1,14 @@
-package com.example.tictactoe;
+ package com.example.tictactoe;
 
 import com.google.gson.Gson;
 
-public class TicTacToeModel {
+import java.util.Random;
 
+public class TicTacToeModel {
+    
     private WhoseTurn grid[][] = new WhoseTurn[3][3];
     WhoseTurn currPlayer = WhoseTurn.X;
+    private static int countForComputer = 0;
 
     TicTacToeModel() {
         restart();
@@ -20,15 +23,28 @@ public class TicTacToeModel {
     }
 
     public void cellClick(int row, int col, WhoseTurn turn) {
-        if (isValidClick(row, col)) {
+//        if (isValidClick(row, col)) {
             grid[row][col] = turn;
             currPlayer = (currPlayer.equals(WhoseTurn.X)) ? WhoseTurn.O : WhoseTurn.X;
+//        }
+        //isWin();
+    }
+
+    public boolean computersTurn(int row, int col) {
+        if (countForComputer == 900)
+            return false;
+        if (isValidClick(row, col)) {
+            cellClick(row, col, TicTacToeModel.WhoseTurn.O);
+            return true;
+        } else {
+            countForComputer++;
         }
-        isWin();
+        return false;
     }
 
     public boolean isWin() {
         return (isRowWinner() || isColWinner() || isDiagonalTopLeftWinner() || isDiagonalTopRightWinner());
+
     }
 
     private boolean isDiagonalTopRightWinner() {
@@ -137,6 +153,7 @@ public class TicTacToeModel {
                 grid[i][j] = WhoseTurn.None;
             }
         }
+        countForComputer = 0;
     }
 
     public String getText(int row, int col) {
