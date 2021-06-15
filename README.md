@@ -1,5 +1,5 @@
 # TicTacToe
-TicTacToe built in AndroidStudio as Term Project for class.
+TicTacToe built in AndroidStudio as Term Project for class - Received an A.
 
  Features:
 
